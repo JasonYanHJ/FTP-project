@@ -1,0 +1,25 @@
+# ninja log v5
+0	23	1668702646227726374	CMakeFiles/client.dir/common/exitable_socket.c.o	7e8d61a226e0ccb5
+24	49	1668702646253146228	client	8a1a5eb9892c23fb
+0	19	1668693074810231293	CMakeFiles/project.dir/try_catch.c.o	313accb156e20b3f
+1	36	1668702616250470342	CMakeFiles/client.dir/client/client.c.o	3505bfacb50f3c48
+0	18	1668692983886507119	CMakeFiles/project2.dir/try_catch.c.o	b83988f51a8f4265
+0	21	1668697855630104932	CMakeFiles/client.dir/common/try_catch.c.o	42f7f15f5dfffc02
+19	52	1668692983920543906	project2	d75970e19c2d784c
+0	19	1668692983887852792	CMakeFiles/project2.dir/test2.c.o	59fb82c6f8533971
+28	55	1668692915150200422	project1	e0be3465070dd233
+0	28	1668692915122363581	CMakeFiles/project1.dir/test.c.o	b176131ac0188b3d
+1	29	1668702667194668160	CMakeFiles/server.dir/server/server.c.o	6e86b4ce808d4501
+1	23	1668692915116561720	CMakeFiles/project1.dir/try_catch.c.o	bf4a3dcac1a182
+29	51	1668702667218143047	server	98faa0e1089e07be
+1	21	1668701870397915684	CMakeFiles/server.dir/common/try_catch.c.o	1590c43035f97e1c
+1	27	1668702667192489026	CMakeFiles/server.dir/common/exitable_socket.c.o	9d70cde8496f4586
+0	40	1668703924019011403	build.ninja	b35b8e79b9371727
+1	69	1668704114151529907	CMakeFiles/server.dir/common/exitable_functions.c.o	eab019f0f95f7c1e
+1	69	1668704114151554490	CMakeFiles/server.dir/server/server.c.o	6e86b4ce808d4501
+69	106	1668704114189772831	server	a2b36fc321cc3970
+0	35	1668704233874228861	CMakeFiles/server.dir/server/server.c.o	6e86b4ce808d4501
+35	61	1668704233901143776	server	a2b36fc321cc3970
+3	32	1668704238217321061	CMakeFiles/client.dir/common/exitable_functions.c.o	b0e5ffa9dacf28a4
+3	33	1668704238219652947	CMakeFiles/client.dir/client/client.c.o	3505bfacb50f3c48
+33	57	1668704238244927145	client	3f9497d019d8a656
