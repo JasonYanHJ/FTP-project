@@ -5,6 +5,6 @@
 #ifndef PROJECT_DEFINES_H
 #define PROJECT_DEFINES_H
 
-const int N = 256; //Max Buffer Size
+#define BUF_SIZE 256
 
 #endif //PROJECT_DEFINES_H
