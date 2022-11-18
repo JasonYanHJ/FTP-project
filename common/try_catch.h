@@ -1,6 +1,7 @@
 #pragma once
 
 #include <setjmp.h>
+#include "defines.h"
 
 #define MAX_JUMP 1024
 typedef jmp_buf* jmp_stack[MAX_JUMP];
@@ -19,4 +20,6 @@ jmp_buf* jmp_stack_pop();
 	if (!x) jmp_stack_pop(); \
 	else
 
-#define throw(x) longjmp(*jmp_stack_pop(), x)
+#define throw(x) longjmp (*jmp_stack_pop(), x)
+
+#define ASSERT(exp, err_no) if (!(exp)) throw(err_no);

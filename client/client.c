@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
             break;
         e_write(socket_control, buffer, strlen(buffer));
         bzero(buffer,256);
-        e_read(socket_control, buffer, 255);
-        printf("%s\n",buffer);
+        ssize_t n = e_read(socket_control, buffer, 255);
+        printf("%s(%lu)\n", buffer, n);
     }
     close(socket_control);
     return 0;

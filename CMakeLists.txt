@@ -10,11 +10,25 @@ add_executable(server
         common/try_catch.c
         common/try_catch.h
         common/exitable_functions.h
-        common/exitable_functions.c common/file_io_helper.c common/file_io_helper.h common/defines.h common/transfer_packet.h)
+        common/exitable_functions.c
+        common/request.c
+        common/request.h
+        common/defines.h
+        common/file_io_helper.c
+        common/file_io_helper.h
+        common/defines.h
+        common/transfer_packet.h)
 
 add_executable(client
         client/client.c
         common/try_catch.c
         common/try_catch.h
         common/exitable_functions.h
-        common/exitable_functions.c common/file_io_helper.c common/file_io_helper.h common/defines.h common/transfer_packet.h)
+        common/exitable_functions.c
+        common/request.c
+        common/request.h
+        common/defines.h
+        common/file_io_helper.c
+        common/file_io_helper.h
+        common/defines.h
+        common/transfer_packet.h)

@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "../common/exitable_functions.h"
+#include "../common/request.h"
 
 void do_stuff(int);
 void start_listen(int *socket, int port_no);
@@ -59,10 +60,18 @@ void do_stuff (int sock)
     char buffer[256];
 
     while (1) {
-        bzero(buffer,256);
-        n = e_read(sock,buffer,255);
-        if (n == 0) break;
-        printf("Here is the message(size=%ld): %s\n", n, buffer);
-        e_write(sock,"I got your message",18);
+        try {
+            bzero(buffer,256);
+            n = e_read(sock,buffer,255);
+            if (n == 0) break;
+            printf("Here is the message(size=%ld): %s\n", n, buffer);
+            struct request req;
+            t_read_request(&req, buffer);
+            printf("command: %s\narg1: %s\narg2: %s\narg3: %s\narg4: %s\n", req.command, req.args[0], req.args[1], req.args[2], req.args[3]);
+            e_write(sock,"I got your request",18);
+        }
+        catch (err_no) {
+            e_write(sock,"request syntax error!\n",21);
+        }
     }
 }
