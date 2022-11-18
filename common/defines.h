@@ -5,8 +5,6 @@
 #ifndef PROJECT_DEFINES_H
 #define PROJECT_DEFINES_H
 
-#define BUF_SIZE 256
-
 #define ERR_REQUEST_SYNTAX 1
 
 #endif //PROJECT_DEFINES_H

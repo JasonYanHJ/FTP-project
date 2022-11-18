@@ -5,11 +5,16 @@
 #ifndef PROJECT_TRANSFER_PACKET_H
 #define PROJECT_TRANSFER_PACKET_H
 
-// #define BUF_SIZE 256
+#define BUF_SIZE 256
 
-//struct Packet{
-//    unsigned int buffer_size;
-//    char buffer[BUF_SIZE];
-//};
+struct Header{
+    unsigned int buffer_size;
+    char ctrl_bits;
+};
+
+struct Packet{
+    struct Header header;
+    char buffer[(BUF_SIZE - sizeof(struct Header))];
+};
 
 #endif //PROJECT_TRANSFER_PACKET_H
