@@ -6,6 +6,7 @@
 #include "../common/request.h"
 #include "../common/path_helper.h"
 #include "../common/socket_helper.h"
+#include "../common/file_io_helper.h"
 
 void do_stuff(int, const char *);
 
@@ -90,7 +91,17 @@ void do_stuff (int socket_control, const char *path)
                 e_write(socket_data, "success", 7);
             } else if (strcmp(req.command, "pwd") == 0) {
                 e_write(socket_data, cwd, strlen(cwd));
+            } else if (strcmp(req.command, "get") == 0) {
+                char filename[1024];
+                sprintf(filename, "%s/%s", cwd, req.args[0]);
+                const char* open_mode = "rb";
+                FILE* fp = fopen(filename, open_mode);
+                // TODO: What if fp is null?
+                _for_in_fp(BUF_SIZE, buffer_send, read_cnt, fp){
+                    e_write(socket_data, buffer_send, read_cnt);
+                }
             }
+
 
             close(socket_data);
         }
