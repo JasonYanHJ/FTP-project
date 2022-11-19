@@ -36,9 +36,10 @@ int main(int argc, char *argv[])
             int socket_data;
             create_data_socket(&socket_data, socket_control);
 
-            bzero(buffer, 256);
+            bzero(buffer, BUF_SIZE);
             ssize_t n;
-            while ((n = e_read(socket_data, buffer, 255))) {
+            while ((n = e_read(socket_data, buffer, BUF_SIZE - 1))) {
+                buffer[n] = '\0';
                 printf("%s(%lu)\n", buffer, n);
             }
 
