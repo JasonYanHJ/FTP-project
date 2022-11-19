@@ -6,6 +6,7 @@
 #define PROJECT_DEFINES_H
 
 #define BUF_SIZE 256
+#define CLIENT_PORT 51718
 
 #define ERR_REQUEST_SYNTAX 1
 

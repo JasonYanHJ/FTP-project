@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 #include "../common/exitable_functions.h"
+#include "../common/defines.h"
+#include "../common/socket_helper.h"
+#include "../common/try_catch.h"
 
-struct sockaddr_in get_addr_from_host(int port_no, struct sockaddr_in *host_addr, const struct hostent *host);
-void connect_to_server(int *socket_control, const char *name, int port_no);
+void create_data_socket(int *socket_data, int socket_control);
 
 int main(int argc, char *argv[])
 {
@@ -18,37 +17,49 @@ int main(int argc, char *argv[])
     }
 
     int socket_control;
-    connect_to_server(&socket_control, argv[1], atoi(argv[2]));
+    e_socket_connect(&socket_control, e_get_server_addr(argv[1], atoi(argv[2])));
 
     char buffer[256];
     while (1) {
-        printf("Please enter the message: ");
-        bzero(buffer, 256);
-        fgets(buffer, 255, stdin);
-        if (strncmp(buffer, "quit", 4) == 0)
-            break;
-        e_write(socket_control, buffer, strlen(buffer));
-        bzero(buffer,256);
-        ssize_t n = e_read(socket_control, buffer, 255);
-        printf("%s(%lu)\n", buffer, n);
+        try {
+            printf("Please enter the message: ");
+            bzero(buffer, 256);
+            fgets(buffer, 255, stdin);
+            if (strncmp(buffer, "quit", 4) == 0)
+                break;
+            e_write(socket_control, buffer, strlen(buffer));
+
+            int ret_code;
+            e_read(socket_control, &ret_code, sizeof(ret_code));
+            ASSERT(ret_code == 0, ret_code)
+
+            int socket_data;
+            create_data_socket(&socket_data, socket_control);
+
+            bzero(buffer, 256);
+            ssize_t n;
+            while ((n = e_read(socket_data, buffer, 255))) {
+                printf("%s(%lu)\n", buffer, n);
+            }
+
+            close(socket_data);
+        }
+        catch(err_no) {
+            printf("err_no: %d\n", err_no);
+        }
     }
+
     close(socket_control);
     return 0;
 }
 
-void connect_to_server(int *socket_control, const char *name, int port_no) {
-    *socket_control = e_socket(AF_INET, SOCK_STREAM, 0);
-    struct hostent *server = e_gethostbyname(name);
-    struct sockaddr_in serv_addr = get_addr_from_host(port_no, &serv_addr, server);
-    e_connect(*socket_control, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-}
+void create_data_socket(int *socket_data, int socket_control) {
+    int socket_listen;
+    e_start_listen(&socket_listen, CLIENT_PORT);
 
-struct sockaddr_in get_addr_from_host(int port_no, struct sockaddr_in *host_addr, const struct hostent *host) {
-    bzero((char *) host_addr, sizeof((*host_addr)));
-    (*host_addr).sin_family = AF_INET;
-    bcopy((char *) host->h_addr,
-          (char *) &(*host_addr).sin_addr.s_addr,
-          host->h_length);
-    (*host_addr).sin_port = htons(port_no);
-    return (*host_addr);
+    int ready = 1;
+    e_write(socket_control, (char*) &ready, sizeof(ready));
+
+    e_socket_accept(socket_data, socket_listen);
+    close(socket_listen);
 }

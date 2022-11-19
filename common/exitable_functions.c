@@ -39,6 +39,13 @@ struct hostent *e_gethostbyname(const char *name) {
     return ret;
 }
 
+int e_getpeername(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len) {
+    int ret = getpeername(socket, address, address_len);
+    if (ret < 0)
+        error("ERROR get peer name");
+    return ret;
+}
+
 int e_connect(int socket, const struct sockaddr *address, socklen_t address_len) {
     int ret = connect(socket, address, address_len);
     if (ret < 0)
