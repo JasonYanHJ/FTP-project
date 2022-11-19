@@ -64,13 +64,10 @@ void do_stuff (int socket_control, const char *path)
 
     while (1) {
         try {
-            bzero(buffer,256);
-            n = e_read(socket_control, buffer, 255);
-            if (n == 0) break;
-            printf("Here is the message(size=%ld): %s\n", n, buffer);
+            //TODO: Confirm that request str-->struct has been moved to client.c
             struct request req;
-            t_read_request(&req, buffer);
-            // TODO: verify request
+            n = e_read(socket_control, &req, sizeof(struct request));
+            if (n == 0) break;
             printf("command: %s\narg1: %s\narg2: %s\narg3: %s\narg4: %s\n", req.command, req.args[0], req.args[1], req.args[2], req.args[3]);
 
             int accepted = 0;
@@ -79,6 +76,7 @@ void do_stuff (int socket_control, const char *path)
             int socket_data;
             connect_data_socket(&socket_data, socket_control);
 
+            bzero(buffer,256);
             if (strcmp(req.command, "ls") == 0) {
                 char sys_call[1024];
                 sprintf(sys_call, "ls -a %s >& %d 2>&1", cwd, socket_data);
@@ -100,6 +98,17 @@ void do_stuff (int socket_control, const char *path)
                 _for_in_fp(BUF_SIZE, buffer_send, read_cnt, fp){
                     e_write(socket_data, buffer_send, read_cnt);
                 }
+                fclose(fp);
+            } else if (strcmp(req.command, "put") == 0) {
+                char filename[1024];
+                sprintf(filename, "%s/%s", cwd, req.args[1]);
+                const char* open_mode = "wb";
+                FILE* fp = fopen(filename, open_mode);
+
+                while ((n = e_read(socket_data, buffer, BUF_SIZE))) {
+                    fwrite(buffer, n, sizeof(char), fp);
+                }
+                fclose(fp);
             }
 
 
