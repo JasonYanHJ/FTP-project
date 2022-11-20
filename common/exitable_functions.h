@@ -12,6 +12,7 @@
 
 void error(const char *msg);
 int e_socket(int domain, int type, int protocol);
+int e_setsockopt(int socket, int level, int option_name, const void *option_value, socklen_t option_len);
 int e_bind(int socket, const struct sockaddr *address, socklen_t address_len);
 int e_accept(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
 struct hostent *e_gethostbyname(const char *name);

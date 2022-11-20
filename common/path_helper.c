@@ -3,17 +3,13 @@
 //
 
 #include "path_helper.h"
+#define MODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
-void path_back(char *path) {
-    for (int i = strlen(path) - 1; i >= 0; i--) {
-        if (path[i] == '/') {
-            path[i] = '\0';
-            return;
-        }
-    }
+void t_mkdir(const char *dirname) {
+    ASSERT(mkdir(dirname, MODE) == 0, ERR_MKDIR);
 }
 
-void path_add(char *path, const char *dirname) {
-    strcat(path, "/");
-    strcat(path, dirname);
+void t_chdir(char *cwd, size_t size, const char *dirname) {
+    ASSERT(chdir(dirname) == 0, ERR_CHDIR);
+    getcwd(cwd, size);
 }

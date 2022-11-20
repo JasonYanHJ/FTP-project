@@ -6,6 +6,8 @@
 
 void e_start_listen(int *socket, int port_no) {
     *socket = e_socket(AF_INET, SOCK_STREAM, 0);
+    const int enable = 1;
+    e_setsockopt(*socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
     struct sockaddr_in addr = init_socket_addr_in(port_no, INADDR_ANY);
     e_bind(*socket, (struct sockaddr *) &addr, sizeof(addr));
     listen(*socket, 5);
@@ -52,4 +54,15 @@ struct sockaddr_in e_get_server_addr(const char *hostname, int port_no) {
           (char *) &host_addr.sin_addr.s_addr,
           host->h_length);
     return host_addr;
+}
+
+
+void e_write_code(int socket, int code) {
+    e_write(socket, &code, sizeof(code));
+}
+
+int e_read_code(int socket) {
+    int ret;
+    e_read(socket, &ret, sizeof(ret));
+    return ret;
 }

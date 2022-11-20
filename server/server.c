@@ -58,59 +58,94 @@ void do_stuff (int socket_control, const char *path)
     char buffer[256];
     char cwd[1024];
 
-    strcpy(cwd, path);
-    path_back(cwd);
-    printf("cwd: %s\n", cwd);
+    getcwd(cwd, sizeof(cwd));
 
     while (1) {
         try {
-            //TODO: Confirm that request str-->struct has been moved to client.c
             struct request req;
             n = e_read(socket_control, &req, sizeof(struct request));
             if (n == 0) break;
-            printf("command: %s\narg1: %s\narg2: %s\narg3: %s\narg4: %s\n", req.command, req.args[0], req.args[1], req.args[2], req.args[3]);
 
-            int accepted = 0;
-            e_write(socket_control, &accepted, sizeof(accepted));
+            // TODO: verify request
+            e_write_code(socket_control, 0);
 
             int socket_data;
             connect_data_socket(&socket_data, socket_control);
 
             bzero(buffer,256);
-            if (strcmp(req.command, "ls") == 0) {
-                char sys_call[1024];
-                sprintf(sys_call, "ls -a %s >& %d 2>&1", cwd, socket_data);
-                system(sys_call);
-            } else if (strcmp(req.command, "cd") == 0) {
-                if (strcmp(req.args[0], "..") == 0)
-                    path_back(cwd);
-                else
-                    path_add(cwd, req.args[0]);
-                e_write(socket_data, "success", 7);
-            } else if (strcmp(req.command, "pwd") == 0) {
-                e_write(socket_data, cwd, strlen(cwd));
-            } else if (strcmp(req.command, "get") == 0) {
-                char filename[1024];
-                sprintf(filename, "%s/%s", cwd, req.args[0]);
-                const char* open_mode = "rb";
-                FILE* fp = fopen(filename, open_mode);
-                // TODO: What if fp is null?
-                _for_in_fp(BUF_SIZE, buffer_send, read_cnt, fp){
-                    e_write(socket_data, buffer_send, read_cnt);
-                }
-                fclose(fp);
-            } else if (strcmp(req.command, "put") == 0) {
+            if (strcmp(req.command, "put") == 0) {
                 char filename[1024];
                 sprintf(filename, "%s/%s", cwd, req.args[1]);
                 const char* open_mode = "wb";
-                FILE* fp = fopen(filename, open_mode);
+                try {
+                    t_expect_read_code(socket_control, 0);
 
-                while ((n = e_read(socket_data, buffer, BUF_SIZE))) {
-                    fwrite(buffer, n, sizeof(char), fp);
+                    FILE *fp = fopen(filename, open_mode);
+                    ASSERT(fp != NULL, ERR_OPEN_REMOTE_FILE);
+
+                    while ((n = e_read(socket_data, buffer, BUF_SIZE))) {
+                        fwrite(buffer, n, sizeof(char), fp);
+                    }
+                    fclose(fp);
+
+                    e_write_code(socket_control, 0);
                 }
-                fclose(fp);
-            }
+                catch(err_no) {
+                    e_write_code(socket_control, err_no);
+                }
+            } else if (strcmp(req.command, "get") == 0) {
+                char filename[1024];
+                sprintf(filename, "%s/%s", cwd, req.args[0]);
+                const char *open_mode = "rb";
+                try {
+                    FILE *fp = fopen(filename, open_mode);
+                    e_write_code(socket_control, fp == NULL ? ERR_OPEN_REMOTE_FILE : 0);
 
+                    t_expect_read_code(socket_control, 0);
+
+                    _for_in_fp (BUF_SIZE, buffer_send, read_cnt, fp) {
+                        e_write(socket_data, buffer_send, read_cnt);
+                    }
+                    fclose(fp);
+
+                    e_write_code(socket_control, 0);
+                }
+                catch(err_no) {
+                    e_write_code(socket_control, err_no);
+                }
+            } else if (strcmp(req.command, "ls") == 0) {
+                char sys_call[1024];
+                sprintf(sys_call, "ls -a %s >& %d 2>&1", cwd, socket_data);
+                system(sys_call);
+                e_write_code(socket_control, 0);
+            } else if (strcmp(req.command, "cd") == 0) {
+                try {
+                    t_chdir(cwd, sizeof(cwd), req.args[0]);
+                    e_write_code(socket_control, 0);
+                }
+                catch(err_no) {
+                    e_write_code(socket_control, err_no);
+                }
+            } else if (strcmp(req.command, "pwd") == 0) {
+                e_write(socket_data, cwd, strlen(cwd));
+                e_write_code(socket_control, 0);
+            } else if (strcmp(req.command, "mkdir") == 0) {
+                try {
+                    t_mkdir(req.args[0]);
+                    e_write_code(socket_control, 0);
+                }
+                catch(err_no) {
+                    e_write_code(socket_control, err_no);
+                }
+            } else if (strcmp(req.command, "delete") == 0) {
+                try {
+                    t_remove(req.args[0]);
+                    e_write_code(socket_control, 0);
+                }
+                catch(err_no) {
+                    e_write_code(socket_control, err_no);
+                }
+            }
 
             close(socket_data);
         }

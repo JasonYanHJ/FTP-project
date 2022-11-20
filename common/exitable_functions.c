@@ -16,6 +16,13 @@ int e_socket(int domain, int type, int protocol) {
     return ret;
 }
 
+int e_setsockopt(int socket, int level, int option_name, const void *option_value, socklen_t option_len) {
+    int ret = setsockopt(socket, level, option_name, option_value, option_len);
+    if (ret < 0)
+        error("ERROR set socket option");
+    return ret;
+}
+
 int e_bind(int socket, const struct sockaddr *address, socklen_t address_len) {
     int ret = bind(socket, address, address_len);
     if (ret < 0)

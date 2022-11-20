@@ -22,4 +22,4 @@ jmp_buf* jmp_stack_pop();
 
 #define throw(x) longjmp (*jmp_stack_pop(), x)
 
-#define ASSERT(exp, err_no) if (!(exp)) throw(err_no);
+#define ASSERT(exp, err_no) if (!(exp)) throw(err_no)

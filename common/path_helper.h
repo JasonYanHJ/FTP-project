@@ -12,8 +12,9 @@
 #include<dirent.h>
 #include<sys/types.h>
 #include<sys/stat.h>
+#include "try_catch.h"
 
-void path_back(char *path);
-void path_add(char *path, const char *dirname);
+void t_mkdir(const char *dirname);
+void t_chdir(char *cwd, size_t size, const char *dirname);
 
 #endif //PROJECT_PATH_HELPER_H

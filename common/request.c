@@ -33,12 +33,12 @@ void t_read_request(struct request *req, const char *raw_req_buf) {
 
         // find the position of delimiter
         while (raw_req_buf[current] != deli && raw_req_buf[current] != '\n' && current < strlen(raw_req_buf)) {
-            ASSERT(raw_req_buf[current] != '\"', ERR_REQUEST_SYNTAX)
+            ASSERT(raw_req_buf[current] != '\"', ERR_REQUEST_SYNTAX);
             current++;
         }
         if (deli == '\"') {
-            ASSERT(raw_req_buf[current] == deli, ERR_REQUEST_SYNTAX)
-            ASSERT(current + 1 == strlen(raw_req_buf) || raw_req_buf[current + 1] == ' ' || raw_req_buf[current + 1] == '\n', ERR_REQUEST_SYNTAX)
+            ASSERT(raw_req_buf[current] == deli, ERR_REQUEST_SYNTAX);
+            ASSERT(current + 1 == strlen(raw_req_buf) || raw_req_buf[current + 1] == ' ' || raw_req_buf[current + 1] == '\n', ERR_REQUEST_SYNTAX);
         }
 
         // write to req
