@@ -135,7 +135,7 @@ void client_process_get(int socket_control, int socket_data, struct request *req
 }
 
 void client_process_put(int socket_control, int socket_data, struct request *req) {
-    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r" : "rb";
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r+" : "rb+";
     try {
         FILE *fp = fopen((*req).args[0], open_mode);
         ASSERT(fp != NULL, ERR_OPEN_LOCAL_FILE);
