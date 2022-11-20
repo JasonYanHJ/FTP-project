@@ -153,7 +153,7 @@ void server_process_ls(int socket_control, int socket_data, const char *cwd) {
 void server_process_get(int socket_control, int socket_data, struct request *req, const char *cwd) {
     char filename[1024];
     merge_path(filename, cwd, req->args[0]);
-    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r" : "rb";
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r+" : "rb+";
     try {
         FILE *fp = fopen(filename, open_mode);
         e_write_code(socket_control, fp == NULL ? ERR_OPEN_REMOTE_FILE : SUC_OPEN_REMOTE_FILE);
