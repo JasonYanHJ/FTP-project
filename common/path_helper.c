@@ -5,6 +5,17 @@
 #include "path_helper.h"
 #define MODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
+void merge_path(char *dest, const char *cwd, const char *path) {
+    if (path[0] == '/')
+        strcpy(dest, path);
+    else {
+        if (cwd[strlen(cwd) - 1] == '/')
+            sprintf(dest, "%s%s", cwd, path);
+        else
+            sprintf(dest, "%s/%s", cwd, path);
+    }
+}
+
 void t_mkdir(const char *dirname) {
     ASSERT(mkdir(dirname, MODE) == 0, ERR_MKDIR);
 }

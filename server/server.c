@@ -152,8 +152,8 @@ void server_process_ls(int socket_control, int socket_data, const char *cwd) {
 
 void server_process_get(int socket_control, int socket_data, struct request *req, const char *cwd) {
     char filename[1024];
-    sprintf(filename, "%s/%s", cwd, req->args[0]);
-    const char *open_mode = "rb";
+    merge_path(filename, cwd, req->args[0]);
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r" : "rb";
     try {
         FILE *fp = fopen(filename, open_mode);
         e_write_code(socket_control, fp == NULL ? ERR_OPEN_REMOTE_FILE : SUC_OPEN_REMOTE_FILE);
@@ -176,8 +176,8 @@ void server_process_put(int socket_control, int socket_data, struct request *req
     char buffer[BUF_SIZE];
     ssize_t n;
     char filename[1024];
-    sprintf(filename, "%s/%s", cwd, req->args[1]);
-    const char* open_mode = "wb";
+    merge_path(filename, cwd, req->args[1]);
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "w" : "wb";
     try {
         t_expect_read_code(socket_control, SUC_OPEN_LOCAL_FILE);
 

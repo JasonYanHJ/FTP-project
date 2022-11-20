@@ -5,7 +5,6 @@
 #include "../common/exitable_functions.h"
 #include "../common/defines.h"
 #include "../common/socket_helper.h"
-#include "../common/try_catch.h"
 #include "common/request.h"
 #include "common/file_io_helper.h"
 
@@ -116,7 +115,7 @@ void print_err_info(int err_no) {
 
 void client_process_get(int socket_control, int socket_data, struct request *req) {
     char buffer[BUF_SIZE];
-    const char* open_mode = "wb";
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "w" : "wb";
     try {
         t_expect_read_code(socket_control, SUC_OPEN_REMOTE_FILE);
 
@@ -136,7 +135,7 @@ void client_process_get(int socket_control, int socket_data, struct request *req
 }
 
 void client_process_put(int socket_control, int socket_data, struct request *req) {
-    const char *open_mode = "rb";
+    const char* open_mode = (strcmp(req->args[2], "ascii") == 0) ? "r" : "rb";
     try {
         FILE *fp = fopen((*req).args[0], open_mode);
         ASSERT(fp != NULL, ERR_OPEN_LOCAL_FILE);

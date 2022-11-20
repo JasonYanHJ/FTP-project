@@ -17,7 +17,6 @@ add_executable(server
         common/file_io_helper.c
         common/file_io_helper.h
         common/defines.h
-        common/transfer_packet.h
         common/path_helper.c
         common/path_helper.h
         common/socket_helper.c
@@ -35,7 +34,6 @@ add_executable(client
         common/file_io_helper.c
         common/file_io_helper.h
         common/defines.h
-        common/transfer_packet.h
         common/path_helper.c
         common/path_helper.h
         common/socket_helper.c
