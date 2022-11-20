@@ -37,36 +37,30 @@ int main(int argc, char *argv[])
             e_write(socket_control, &req, sizeof(struct request));
 
             t_expect_read_code(socket_control, SUC_REQ_ACCEPTED);
+
+            // when request accepted, create one data socket to transfer data
+            int socket_data;
+            create_data_socket(&socket_data, socket_control);
+            if (strcmp(req.command, "put") == 0) {
+                client_process_put(socket_control, socket_data, &req);
+            } else if (strcmp(req.command, "get") == 0){
+                client_process_get(socket_control, socket_data, &req);
+            } else {
+                bzero(buffer, BUF_SIZE);
+                ssize_t n;
+                while ((n = e_read(socket_data, buffer, BUF_SIZE - 1))) {
+                    buffer[n] = '\0';
+                    printf("%s\n", buffer);
+                }
+            }
+            close(socket_data);
+
+            t_expect_read_code(socket_control, SUC_REQ_DONE);
         }
         catch(err_no) {
             if (err_no == SUC_REQ_QUIT)
                 break;
             print_err_info(err_no);
-            continue;
-        }
-
-        // when request accepted, create one data socket to transfer data
-        int socket_data;
-        create_data_socket(&socket_data, socket_control);
-
-        if (strcmp(req.command, "put") == 0) {
-            client_process_put(socket_control, socket_data, &req);
-        } else if (strcmp(req.command, "get") == 0){
-            client_process_get(socket_control, socket_data, &req);
-        } else {
-            bzero(buffer, BUF_SIZE);
-            ssize_t n;
-            while ((n = e_read(socket_data, buffer, BUF_SIZE - 1))) {
-                buffer[n] = '\0';
-                printf("%s\n", buffer);
-            }
-        }
-
-        close(socket_data);
-
-        int ret_code = e_read_code(socket_control);
-        if (ret_code != SUC_REQ_DONE) {
-            print_err_info(ret_code);
         }
 
     }
