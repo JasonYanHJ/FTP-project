@@ -8,11 +8,31 @@
 #define BUF_SIZE 256
 #define CLIENT_PORT 51718
 
-#define ERR_REQUEST_SYNTAX 1
-#define ERR_MKDIR 2
-#define ERR_OPEN_LOCAL_FILE 3
-#define ERR_OPEN_REMOTE_FILE 4
-#define ERR_CHDIR 5
-#define ERR_DELETE 6
+#define SUC_REQ_ACCEPTED 0
+#define SUC_REQ_DONE 1
+#define SUC_REQ_QUIT 2
+#define SUC_OPEN_LOCAL_FILE 3
+#define SUC_OPEN_REMOTE_FILE 4
+
+#define ERR_REQUEST_SYNTAX 101
+#define ERR_UNKNOWN_CMD 102
+#define ERR_TOO_MANY_ARGS 103
+#define ERR_TOO_FEW_ARGS 104
+#define ERR_INVALID_ARGS 105
+#define ERR_OPEN_LOCAL_FILE 106
+#define ERR_OPEN_REMOTE_FILE 107
+#define ERR_DELETE 108
+#define ERR_MKDIR 109
+#define ERR_CHDIR 110
+
+#define CMD_UNKNOWN 0
+#define CMD_GET 1
+#define CMD_PUT 2
+#define CMD_DELETE 3
+#define CMD_LS 4
+#define CMD_CD 5
+#define CMD_MKDIR 6
+#define CMD_PWD 7
+#define CMD_QUIT 8
 
 #endif //PROJECT_DEFINES_H

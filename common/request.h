@@ -11,10 +11,12 @@
 #define REQUEST_MAX_ARGS 4
 
 struct request {
+    int cmd_no;
     char command[16];
     char args[REQUEST_MAX_ARGS][BUF_SIZE];
 };
 
 void t_read_request(struct request *req, const char *raw_req_buf);
+void t_verify_request(struct request *req);
 
 #endif //PROJECT_REQUEST_H
