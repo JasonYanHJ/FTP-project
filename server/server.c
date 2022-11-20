@@ -145,7 +145,7 @@ void server_process_cd(int socket_control, struct request *req, char *cwd, ssize
 
 void server_process_ls(int socket_control, int socket_data, const char *cwd) {
     char sys_call[1024];
-    sprintf(sys_call, "ls -a %s >& %d 2>&1", cwd, socket_data);
+    sprintf(sys_call, "ls -a \"%s\" >& %d 2>&1", cwd, socket_data);
     system(sys_call);
     e_write_code(socket_control, SUC_REQ_DONE);
 }
